@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дело №17: Архив Ключникова</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono@latest/latin-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --bg: #0a0e14;
+    --bg-2: #111821;
+    --panel: #151d28;
+    --border: #1f2a38;
+    --green: #00ff88;
+    --green-dim: #00cc6a;
+    --red: #ff3860;
+    --amber: #ffb454;
+    --text: #d4dae0;
+    --text-dim: #7a8694;
+    --accent: #5eead4;
+  }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(circle at 20% 10%, rgba(0, 255, 136, 0.04), transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(255, 56, 96, 0.04), transparent 50%);
+  }
+  
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 255, 136, 0.02) 0px,
+      rgba(0, 255, 136, 0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+  
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+  
+  .top-bar .status {
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .top-bar .status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  
+  .top-bar .case-num {
+    color: var(--text-dim);
+  }
+  
+  .screen {
+    display: none;
+    animation: fadeIn 0.6s ease;
+  }
+  
+  .screen.active {
+    display: block;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    opacity: 0.5;
+  }
+  
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--border);
+  }
+  
+  .panel-header .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--green);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+  
+  .panel-header .tag.red {
+    background: rgba(255, 56, 96, 0.1);
+    color: var(--red);
+    border-color: rgba(255, 56, 96, 0.3);
+  }
+  
+  .panel-header .tag.amber {
+    background: rgba(255, 180, 84, 0.1);
+    color: var(--amber);
+    border-color: rgba(255, 180, 84, 0.3);
+  }
+  
+  h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--accent);
+  }
+  
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
+  
+  p {
+    line-height: 1.7;
+    margin-bottom: 14px;
+    font-size: 15px;
+  }
+  
+  .cipher-box {
+    background: #000;
+    border: 1px solid var(--green);
+    border-radius: 8px;
+    padding: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    letter-spacing: 4px;
+    color: var(--green);
+    text-align: center;
+    margin: 20px 0;
+    word-break: break-all;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    position: relative;
+  }
+  
+  .cipher-box::before {
+    content: '> INCOMING TRANSMISSION';
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+  
+  .cipher-box.decrypted {
+    color: var(--amber);
+    border-color: var(--amber);
+    text-shadow: 0 0 10px rgba(255, 180, 84, 0.5);
+  }
+  
+  .cipher-box.decrypted::before {
+    content: '> DECODED MESSAGE';
+    color: var(--amber);
+  }
+  
+  .evidence {
+    background: rgba(255, 180, 84, 0.05);
+    border-left: 3px solid var(--amber);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-style: italic;
+    color: var(--text);
+    border-radius: 0 6px 6px 0;
+  }
+  
+  .evidence::before {
+    content: '📎 УЛИКА';
+    display: block;
+    font-style: normal;
+    font-size: 11px;
+    color: var(--amber);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  
+  .shift-control {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  
+  .shift-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+  
+  .shift-value {
+    background: var(--green);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 16px;
+    min-width: 40px;
+    text-align: center;
+  }
+  
+  input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    background: var(--green);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: var(--green);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+  }
+  
+  .btn {
+    background: var(--green);
+    color: #000;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .btn:hover {
+    background: var(--green-dim);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.3);
+  }
+  
+  .btn:disabled {
+    background: var(--border);
+    color: var(--text-dim);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  
+  .btn-secondary:hover {
+    background: var(--bg-2);
+    border-color: var(--text-dim);
+    box-shadow: none;
+  }
+  
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  
+  .progress {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    justify-content: center;
+  }
+  
+  .progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s;
+  }
+  
+  .progress-dot.active {
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+    width: 24px;
+    border-radius: 4px;
+  }
+  
+  .progress-dot.done {
+    background: var(--green-dim);
+  }
+  
+  .reveal-box {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(94, 234, 212, 0.05));
+    border: 2px solid var(--green);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .reveal-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 30% 30%, rgba(0, 255, 136, 0.2), transparent 50%),
+      radial-gradient(circle at 70% 70%, rgba(94, 234, 212, 0.2), transparent 50%);
+    pointer-events: none;
+  }
+  
+  .reveal-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+    text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+    position: relative;
+  }
+  
+  .reveal-sub {
+    color: var(--text);
+    font-size: 16px;
+    position: relative;
+  }
+  
+  .terms {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  
+  .term {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 3px solid var(--green);
+  }
+  
+  .term-name {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--green);
+    font-size: 13px;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  
+  .term-def {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  
+  .hint {
+    background: rgba(94, 234, 212, 0.05);
+    border: 1px dashed rgba(94, 234, 212, 0.3);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--accent);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .hint::before {
+    content: '💡';
+    font-size: 18px;
+  }
+  
+  @media (max-width: 640px) {
+    h1 { font-size: 24px; }
+    .reveal-title { font-size: 28px; }
+    .cipher-box { font-size: 16px; letter-spacing: 2px; padding: 16px; }
+    .panel { padding: 20px; }
+    .container { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="top-bar">
+    <div class="case-num">ДЕЛО №17 / КРИПТОГРАФИЧЕСКИЙ ОТДЕЛ</div>
+    <div class="status">АКТИВНО</div>
+  </div>
+
+  <div class="progress" id="progress">
+    <div class="progress-dot active"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+    <div class="progress-dot"></div>
+  </div>
+
+  <!-- SCREEN 1: Legend -->
+  <div class="screen active" id="screen-1">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="tag red">СЕКРЕТНО</span>
+        <span class="tag">ВХОДЯЩЕЕ СООБЩЕНИЕ</span>
+      </div>
+      <h1>Дело о пропавшем архиве</h1>
+      <p class="subtitle">Время: 08:47 · Приоритет: критический</p>
+      
+      <p>Этой ночью из кабинета криптографа <strong>Ивана Петровича Ключникова</strong> пропал секретный архив. Перед исчезновением он успел отправить коллеге странное сообщение:</p>
+      
+      <div class="cipher-box" id="mainCipher">
+        ······ ···· ········
+      </div>
+      
+      <p>Никто не может его прочитать. Архив самоуничтожится через <strong>45 минут</strong>, если мы не узнаем, где он спрятан.</p>
+      
+      <div class="evidence">
+        «Шифр простой: берёшь алфавит и сдвигаешь каждую букву на одно и то же число позиций. Ключ — день моего рождения. Не ошибёшься.»
+      </div>
+      
+      <p>Это всё, что у нас есть. Зашифрованный текст, обрывок записки и... тишина.</p>
+      
+      <div class="btn-row">
+        <button class="btn" onclick="goTo(2)">Приступить к расследованию →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: What is this? -->
+  <div class="screen" id="screen-2">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="tag amber">АНАЛИЗ</span>
+        <span class="tag">ШАГ 1 / 4</span>
+      </div>
+      <h2>Шаг 1. Что мы видим?</h2>
+      
+      <p>Посмотрите внимательно на перехваченное сообщение:</p>
+      
+      <div class="cipher-box" id="cipherDisplay2">
+        ······ ···· ········
+      </div>
+      
+      <p>Похоже на русский текст — те же буквы, есть пробелы между словами. Но смысла нет. Словарь таких слов не знает.</p>
+      
+      <p>Однако в записке Ключников описал <strong>принцип</strong>: «сдвигаешь каждую букву на одно и то же число позиций». Значит, каждая буква оригинала была заменена на другую — сдвинута в алфавите на определённое число.</p>
+      
+      <div class="hint">
+        Если сдвинуть каждую букву русского алфавита на одно и то же число позиций вперёд, мы получим зашифрованный текст. Чтобы расшифровать — нужно сдвинуть обратно.
+      </div>
+      
+      <p>Задача: <strong>подобрать величину сдвига</strong>. Если угадаете — буквы сложатся в осмысленные слова.</p>
+      
+      <div class="btn-row">
+        <button class="btn-secondary btn" onclick="goTo(1)">← Назад</button>
+        <button class="btn" onclick="goTo(3)">Попробую взломать →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Interactive shift -->
+  <div class="screen" id="screen-3">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="tag amber">ВЗЛОМ</span>
+        <span class="tag">ШАГ 2 / 4</span>
+      </div>
+      <h2>Шаг 2. Подбор ключа</h2>
+      
+      <p>Двигайте ползунок — и смотрите, как меняется текст. Ваша задача — получить осмысленное русское сообщение.</p>
+      
+      <div class="shift-control">
+        <div class="shift-label">
+          <span>ВЕЛИЧИНА СДВИГА:</span>
+          <span class="shift-value" id="shiftVal">1</span>
+        </div>
+        <input type="range" id="shiftSlider" min="1" max="32" value="1">
+      </div>
+      
+      <p style="font-size: 13px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">ЗАШИФРОВАНО:</p>
+      <div class="cipher-box" id="cipherDisplay3">
+        ······ ···· ········
+      </div>
+      
+      <p style="font-size: 13px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">ПОСЛЕ РАСШИФРОВКИ:</p>
+      <div class="cipher-box decrypted" id="decodedDisplay">
+        ······ ···· ········
+      </div>
+      
+      <div class="hint" id="hintBox" style="display: none;">
+        <div>
+          <strong>Подсказка:</strong> Ключников родился <em>17 октября</em>. В записке он писал: «Ключ — день моего рождения».
+          <br><br>
+          Попробуйте сдвиг, равный <strong>17</strong>.
+        </div>
+      </div>
+      
+      <div class="btn-row">
+        <button class="btn-secondary btn" onclick="goTo(2)">← Назад</button>
+        <button class="btn" id="checkBtn" onclick="checkShift()" disabled>Проверить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Success + second message -->
+  <div class="screen" id="screen-4">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="tag">ВЗЛОМАНО</span>
+        <span class="tag">ШАГ 3 / 4</span>
+      </div>
+      <h2>Шаг 3. Архив найден!</h2>
+      
+      <p>Отлично! При сдвиге <strong>17</strong> сообщение обрело смысл:</p>
+      
+      <div class="cipher-box decrypted">
+        АРХИВ В СЕЙФЕ ЗА КАРТИНОЙ
+      </div>
+      
+      <p>Мы вскрыли шифр. Но что мы на самом деле сделали? Давайте разберём по шагам:</p>
+      
+      <div class="terms">
+        <div class="term">
+          <div class="term-name">1. АЛГОРИТМ</div>
+          <div class="term-def">Мы поняли <em>способ</em>: каждая буква сдвигается на одно и то же число позиций в алфавите.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">2. КЛЮЧ</div>
+          <div class="term-def">Мы нашли <em>параметр</em>: число 17. Без него алгоритм бесполезен.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">3. ШИФР</div>
+          <div class="term-def">Алгоритм + ключ = <em>шифр</em>. Именно он превратил понятный текст в бессмыслицу.</div>
+        </div>
+      </div>
+      
+      <p style="margin-top: 24px;">Но вот незадача. В архиве Ключникова нашли <strong>вторую записку</strong>:</p>
+      
+      <div class="cipher-box" id="cipherDisplay4">
+        ······ ···· ········
+      </div>
+      
+      <p>Попробуйте сдвинуть её на 17 — ничего не получится. Здесь использован <strong>другой способ</strong> шифрования.</p>
+      
+      <div class="hint">
+        Выходит, способов спрятать смысл в тексте может быть много. И у каждого — свои правила, свои слабости, свои ключи.
+      </div>
+      
+      <div class="btn-row">
+        <button class="btn" onclick="goTo(5)">Что это всё значит? →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Topic reveal -->
+  <div class="screen" id="screen-5">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="tag">ФИНАЛ</span>
+        <span class="tag">ШАГ 4 / 4</span>
+      </div>
+      <h2>Шаг 4. Тема урока</h2>
+      
+      <p>За несколько минут вы:</p>
+      <p>✓ обнаружили, что текст можно <strong>преобразовать</strong> так, чтобы смысл стал нечитаем;</p>
+      <p>✓ поняли, что для этого нужен <strong>способ</strong> (алгоритм) и <strong>параметр</strong> (ключ);</p>
+      <p>✓ убедились, что таких способов существует <strong>множество</strong> — и они разные.</p>
+      
+      <p>Всё это — одна большая область информатики. И сегодня мы её изучим.</p>
+      
+      <div class="reveal-box">
+        <div class="reveal-title">ШИФРОВАНИЕ</div>
+        <div class="reveal-sub">преобразование информации для сокрытия её содержания</div>
+      </div>
+      
+      <p>На уроке мы разберём:</p>
+      
+      <div class="terms">
+        <div class="term">
+          <div class="term-name">СИММЕТРИЧНЫЕ ШИФРЫ</div>
+          <div class="term-def">Шифры, в которых для шифрования и расшифрования используется один и тот же ключ.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">НЕСИММЕТРИЧНЫЕ ШИФРЫ</div>
+          <div class="term-def">Шифры, в которых используются два разных ключа: открытый и закрытый.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">ШИФР ЦЕЗАРЯ</div>
+          <div class="term-def">Один из древнейших методов шифрования.</div>
+        </div>
+        <div class="term">
+          <div class="term-name">ШИФР ВИЖЕНЕРА</div>
+          <div class="term-def">Более сложный и стойкий метод шифрования.</div>
+        </div>
+      </div>
+      
+      <div class="btn-row">
+        <button class="btn" onclick="restart()">🔄 Начать заново</button>
+        <button class="btn btn-secondary" onclick="alert('Открываем учебник, § «Шифрование информации»')">📖 К уроку →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const ALPHABET = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+  const PLAINTEXT = 'АРХИВ В СЕЙФЕ ЗА КАРТИНОЙ';
+  const CORRECT_SHIFT = 17;
+  
+  function encrypt(text, shift) {
+    return text.split('').map(ch => {
+      const idx = ALPHABET.indexOf(ch.toUpperCase());
+      if (idx === -1) return ch;
+      let newIdx = (idx + shift) % ALPHABET.length;
+      return ALPHABET[newIdx];
+    }).join('');
+  }
+  
+  function decrypt(text, shift) {
+    return text.split('').map(ch => {
+      const idx = ALPHABET.indexOf(ch.toUpperCase());
+      if (idx === -1) return ch;
+      let newIdx = (idx - shift) % ALPHABET.length;
+      if (newIdx < 0) newIdx += ALPHABET.length;
+      return ALPHABET[newIdx];
+    }).join('');
+  }
+  
+  const CIPHERTEXT = encrypt(PLAINTEXT, CORRECT_SHIFT);
+  
+  const SECOND_CIPHER = 'ОЕЖЛНЪ Ъ ГЬЗРЖ ЪЬЖС';
+  
+  document.getElementById('mainCipher').textContent = CIPHERTEXT;
+  document.getElementById('cipherDisplay2').textContent = CIPHERTEXT;
+  document.getElementById('cipherDisplay3').textContent = CIPHERTEXT;
+  document.getElementById('cipherDisplay4').textContent = SECOND_CIPHER;
+  
+  const slider = document.getElementById('shiftSlider');
+  const shiftVal = document.getElementById('shiftVal');
+  const decodedDisplay = document.getElementById('decodedDisplay');
+  const checkBtn = document.getElementById('checkBtn');
+  const hintBox = document.getElementById('hintBox');
+  
+  slider.addEventListener('input', () => {
+    const shift = parseInt(slider.value);
+    shiftVal.textContent = shift;
+    const decoded = decrypt(CIPHERTEXT, shift);
+    decodedDisplay.textContent = decoded;
+    
+    if (shift >= 5 && shift !== CORRECT_SHIFT) {
+      hintBox.style.display = 'flex';
+    }
+    
+    checkBtn.disabled = false;
+  });
+  
+  function checkShift() {
+    const shift = parseInt(slider.value);
+    if (shift === CORRECT_SHIFT) {
+      goTo(4);
+    } else {
+      decodedDisplay.style.borderColor = 'var(--red)';
+      decodedDisplay.style.color = 'var(--red)';
+      decodedDisplay.style.textShadow = '0 0 10px rgba(255, 56, 96, 0.5)';
+      setTimeout(() => {
+        decodedDisplay.style.borderColor = '';
+        decodedDisplay.style.color = '';
+        decodedDisplay.style.textShadow = '';
+      }, 800);
+      hintBox.style.display = 'flex';
+    }
+  }
+  
+  function goTo(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + n).classList.add('active');
+    
+    const dots = document.querySelectorAll('.progress-dot');
+    dots.forEach((d, i) => {
+      d.classList.remove('active', 'done');
+      if (i < n - 1) d.classList.add('done');
+      if (i === n - 1) d.classList.add('active');
+    });
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
+  function restart() {
+    slider.value = 1;
+    shiftVal.textContent = '1';
+    decodedDisplay.textContent = '······ ···· ········';
+    hintBox.style.display = 'none';
+    checkBtn.disabled = true;
+    goTo(1);
+  }
+</script>
+
+</body>
+</html>
+
